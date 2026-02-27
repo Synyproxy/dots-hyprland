@@ -81,6 +81,15 @@ StyledPopup {
                 icon: "planner_review"
                 label: "CPU"
             }
+
+            Column {
+                spacing: 4
+                StyledPopupValueRow {
+                    icon: "thermostat"
+                    label: Translation.tr("Temp:")
+                    value: `${Math.round(ResourceUsage.cpuTemperature)}°C`
+                }
+            }
             Column {
                 spacing: 4
                 StyledPopupValueRow {

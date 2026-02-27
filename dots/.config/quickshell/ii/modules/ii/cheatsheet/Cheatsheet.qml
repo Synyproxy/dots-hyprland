@@ -10,6 +10,7 @@ import Quickshell.Io
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Hyprland
+import qs.modules.custom
 
 Scope { // Scope
     id: root
@@ -22,6 +23,10 @@ Scope { // Scope
             "icon": "experiment",
             "name": Translation.tr("Elements")
         },
+        {
+            "icon": "bolt",
+            "name": Translation.tr("Nvim")
+        }
     ]
 
     Loader {
@@ -42,6 +47,7 @@ Scope { // Scope
             function hide() {
                 cheatsheetLoader.active = false;
             }
+
             exclusiveZone: 0
             implicitWidth: cheatsheetBackground.width + Appearance.sizes.elevationMargin * 2
             implicitHeight: cheatsheetBackground.height + Appearance.sizes.elevationMargin * 2
@@ -172,6 +178,7 @@ Scope { // Scope
 
                         CheatsheetKeybinds {}
                         CheatsheetPeriodicTable {}
+                        CheatsheetNvim {}
                     }
                 }
             }

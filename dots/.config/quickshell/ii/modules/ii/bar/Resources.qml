@@ -28,9 +28,7 @@ MouseArea {
         Resource {
             iconName: "swap_horiz"
             percentage: ResourceUsage.swapUsedPercentage
-            shown: (Config.options.bar.resources.alwaysShowSwap && percentage > 0) || 
-                (MprisController.activePlayer?.trackTitle == null) ||
-                root.alwaysShowAllResources
+            shown: (Config.options.bar.resources.alwaysShowSwap && percentage > 0) || (MprisController.activePlayer?.trackTitle == null) || root.alwaysShowAllResources
             Layout.leftMargin: shown ? 6 : 0
             warningThreshold: Config.options.bar.resources.swapWarningThreshold
         }
@@ -38,13 +36,18 @@ MouseArea {
         Resource {
             iconName: "planner_review"
             percentage: ResourceUsage.cpuUsage
-            shown: Config.options.bar.resources.alwaysShowCpu || 
-                !(MprisController.activePlayer?.trackTitle?.length > 0) ||
-                root.alwaysShowAllResources
+            shown: Config.options.bar.resources.alwaysShowCpu || !(MprisController.activePlayer?.trackTitle?.length > 0) || root.alwaysShowAllResources
             Layout.leftMargin: shown ? 6 : 0
             warningThreshold: Config.options.bar.resources.cpuWarningThreshold
         }
 
+        Resource {
+            iconName: "device_thermostat"
+            percentage: ResourceUsage.cpuTemperature / 100
+            shown: true
+            Layout.leftMargin: 6
+            warningThreshold: 80
+        }
     }
 
     ResourcesPopup {

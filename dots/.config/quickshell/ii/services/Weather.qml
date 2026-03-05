@@ -58,9 +58,6 @@ Singleton {
         };
         temp.sunrise = data?.sys?.sunrise ? new Date(data.sys.sunrise * 1000).toLocaleTimeString([], timeOptions) : "00:00";
         temp.sunset = data?.sys?.sunset ? new Date(data.sys.sunset * 1000).toLocaleTimeString([], timeOptions) : "00:00";
-        // temp.sunrise = data?.sys?.sunrise ? new Date(data.sys.sunrise * 1000).toLocaleTimeString() : "0";
-        //
-        // temp.sunset = data?.sys?.sunset ? new Date(data.sys.sunset * 1000).toLocaleTimeString() : "0";
 
         temp.windDir = data?.wind?.deg || 0;
         temp.wCode = data?.weather?.[0]?.id || 0;

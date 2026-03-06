@@ -9,6 +9,8 @@ import qs.modules.common
 import qs.modules.common.widgets
 import qs.modules.common.functions
 
+import qs.services.custom
+
 Item { // Bar content region
     id: root
 
@@ -314,6 +316,23 @@ Item { // Bar content region
                     //     iconSize: Appearance.font.pixelSize.larger
                     //     color: rightSidebarButton.colText
                     // }
+
+                    // VPN Indicator
+                    Revealer {
+                        reveal: Vpn.active
+                        Layout.fillHeight: true
+                        Layout.leftMargin: reveal ? indicatorsRowLayout.realSpacing : 0
+
+                        Behavior on Layout.leftMargin {
+                            animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+                        }
+
+                        MaterialSymbol {
+                            text: "security"
+                            iconSize: Appearance.font.pixelSize.larger
+                            color: rightSidebarButton.colText
+                        }
+                    }
                 }
             }
 

@@ -18,6 +18,8 @@ import qs.modules.ii.sidebarRight.nightLight
 import qs.modules.ii.sidebarRight.volumeMixer
 import qs.modules.ii.sidebarRight.wifiNetworks
 
+import qs.services.custom
+
 Item {
     id: root
     property int sidebarWidth: Appearance.sizes.sidebarWidth
@@ -265,15 +267,9 @@ Item {
 
             QuickToggleButton {
                 id: vpnToggleButton
-                toggled: root.vpnLocalState
-                buttonIcon: root.vpnLocalState ? "security" : "shield"
-                onClicked: {
-                    root.vpnLocalState = !root.vpnLocalState;
-
-                    const action = root.vpnActive ? "down" : "up";
-                    Quickshell.execDetached(["nmcli", "connection", action, "wg0"]);
-                }
-
+                toggled: Vpn.active
+                buttonIcon: Vpn.active ? "security" : "shield"
+                onClicked: Vpn.toggle()
                 StyledToolTip {
                     text: "Asylum VPN"
                 }
@@ -321,23 +317,5 @@ Item {
                 }
             }
         }
-    }
-
-    Process {
-        id: vpnStatusProcess
-        command: ["sh", "-c", "ip addr show wg0 | grep -q 'state UP\\|state UNKNOWN'"]
-        running: GlobalStates.sidebarRightOpen
-
-        onExited: {
-            root.vpnActive = (exitCode === 0);
-            root.vpnLocalState = root.vpnActive;
-        }
-    }
-
-    Timer {
-        interval: 2000
-        running: GlobalStates.sidebarRightOpen
-        repeat: true
-        onTriggered: vpnStatusProcess.start()
     }
 }

@@ -8,6 +8,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Bluetooth
 import Quickshell.Hyprland
+import Quickshell.Io
 
 import qs.modules.ii.sidebarRight.quickToggles
 import qs.modules.ii.sidebarRight.quickToggles.classicStyle
@@ -28,6 +29,8 @@ Item {
     property bool showNightLightDialog: false
     property bool showWifiDialog: false
     property bool editMode: false
+    property bool vpnActive: false      //Truth
+    property bool vpnLocalState: false //UI State
 
     Connections {
         target: GlobalStates
@@ -76,9 +79,11 @@ Item {
                 Layout.fillWidth: true
                 visible: active
                 active: {
-                    const configQuickSliders = Config.options.sidebar.quickSliders
-                    if (!configQuickSliders.enable) return false
-                    if (!configQuickSliders.showMic && !configQuickSliders.showVolume && !configQuickSliders.showBrightness) return false;
+                    const configQuickSliders = Config.options.sidebar.quickSliders;
+                    if (!configQuickSliders.enable)
+                        return false;
+                    if (!configQuickSliders.showMic && !configQuickSliders.showVolume && !configQuickSliders.showBrightness)
+                        return false;
                     return true;
                 }
                 sourceComponent: QuickSliders {}
@@ -147,7 +152,8 @@ Item {
         shownPropertyString: "showWifiDialog"
         dialog: WifiDialog {}
         onShownChanged: {
-            if (!shown) return;
+            if (!shown)
+                return;
             Network.enableWifi();
             Network.rescanWifi();
         }
@@ -160,7 +166,8 @@ Item {
         readonly property bool shown: root[shownPropertyString]
         anchors.fill: parent
 
-        onShownChanged: if (shown) toggleDialogLoader.active = true;
+        onShownChanged: if (shown)
+            toggleDialogLoader.active = true
         active: shown
         onActiveChanged: {
             if (active) {
@@ -171,11 +178,12 @@ Item {
         Connections {
             target: toggleDialogLoader.item
             function onDismiss() {
-                toggleDialogLoader.item.show = false
+                toggleDialogLoader.item.show = false;
                 root[toggleDialogLoader.shownPropertyString] = false;
             }
             function onVisibleChanged() {
-                if (!toggleDialogLoader.item.visible && !root[toggleDialogLoader.shownPropertyString]) toggleDialogLoader.active = false;
+                if (!toggleDialogLoader.item.visible && !root[toggleDialogLoader.shownPropertyString])
+                    toggleDialogLoader.active = false;
             }
         }
     }
@@ -221,7 +229,7 @@ Item {
             radius: height / 2
             implicitWidth: uptimeRow.implicitWidth + 24
             implicitHeight: uptimeRow.implicitHeight + 8
-            
+
             Row {
                 id: uptimeRow
                 anchors.centerIn: parent
@@ -254,6 +262,22 @@ Item {
             }
             color: Appearance.colors.colLayer1
             padding: 4
+
+            QuickToggleButton {
+                id: vpnToggleButton
+                toggled: root.vpnLocalState
+                buttonIcon: root.vpnLocalState ? "security" : "shield"
+                onClicked: {
+                    root.vpnLocalState = !root.vpnLocalState;
+
+                    const action = root.vpnActive ? "down" : "up";
+                    Quickshell.execDetached(["nmcli", "connection", action, "wg0"]);
+                }
+
+                StyledToolTip {
+                    text: "Asylum VPN"
+                }
+            }
 
             QuickToggleButton {
                 toggled: root.editMode
@@ -297,5 +321,23 @@ Item {
                 }
             }
         }
+    }
+
+    Process {
+        id: vpnStatusProcess
+        command: ["sh", "-c", "ip addr show wg0 | grep -q 'state UP\\|state UNKNOWN'"]
+        running: GlobalStates.sidebarRightOpen
+
+        onExited: {
+            root.vpnActive = (exitCode === 0);
+            root.vpnLocalState = root.vpnActive;
+        }
+    }
+
+    Timer {
+        interval: 2000
+        running: GlobalStates.sidebarRightOpen
+        repeat: true
+        onTriggered: vpnStatusProcess.start()
     }
 }

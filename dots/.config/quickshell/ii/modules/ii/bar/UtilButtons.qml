@@ -8,6 +8,8 @@ import Quickshell.Hyprland
 import Quickshell.Services.Pipewire
 import Quickshell.Services.UPower
 
+import qs.services.custom
+
 Item {
     id: root
     property bool borderless: Config.options.bar.borderless
@@ -25,7 +27,7 @@ Item {
             visible: Config.options.bar.utilButtons.showScreenSnip
             sourceComponent: CircleUtilButton {
                 Layout.alignment: Qt.AlignVCenter
-                onClicked: Quickshell.execDetached(["qs", "-p", Quickshell.shellPath(""), "ipc", "call", "region", "screenshot"]);
+                onClicked: Quickshell.execDetached(["qs", "-p", Quickshell.shellPath(""), "ipc", "call", "region", "screenshot"])
                 MaterialSymbol {
                     horizontalAlignment: Qt.AlignHCenter
                     fill: 1
@@ -129,28 +131,55 @@ Item {
                 Layout.alignment: Qt.AlignVCenter
                 onClicked: event => {
                     if (PowerProfiles.hasPerformanceProfile) {
-                        switch(PowerProfiles.profile) {
-                            case PowerProfile.PowerSaver: PowerProfiles.profile = PowerProfile.Balanced
+                        switch (PowerProfiles.profile) {
+                        case PowerProfile.PowerSaver:
+                            PowerProfiles.profile = PowerProfile.Balanced;
                             break;
-                            case PowerProfile.Balanced: PowerProfiles.profile = PowerProfile.Performance
+                        case PowerProfile.Balanced:
+                            PowerProfiles.profile = PowerProfile.Performance;
                             break;
-                            case PowerProfile.Performance: PowerProfiles.profile = PowerProfile.PowerSaver
+                        case PowerProfile.Performance:
+                            PowerProfiles.profile = PowerProfile.PowerSaver;
                             break;
                         }
                     } else {
-                        PowerProfiles.profile = PowerProfiles.profile == PowerProfile.Balanced ? PowerProfile.PowerSaver : PowerProfile.Balanced
+                        PowerProfiles.profile = PowerProfiles.profile == PowerProfile.Balanced ? PowerProfile.PowerSaver : PowerProfile.Balanced;
                     }
                 }
                 MaterialSymbol {
                     horizontalAlignment: Qt.AlignHCenter
                     fill: 0
-                    text: switch(PowerProfiles.profile) {
-                        case PowerProfile.PowerSaver: return "energy_savings_leaf"
-                        case PowerProfile.Balanced: return "airwave"
-                        case PowerProfile.Performance: return "local_fire_department"
+                    text: switch (PowerProfiles.profile) {
+                    case PowerProfile.PowerSaver:
+                        return "energy_savings_leaf";
+                    case PowerProfile.Balanced:
+                        return "airwave";
+                    case PowerProfile.Performance:
+                        return "local_fire_department";
                     }
                     iconSize: Appearance.font.pixelSize.large
                     color: Appearance.colors.colOnLayer2
+                }
+            }
+        }
+        // VPN Toggle Button
+        Loader {
+            // You can add a Config option later, for now we set it to true
+            active: true
+            visible: true
+            sourceComponent: CircleUtilButton {
+                Layout.alignment: Qt.AlignVCenter
+                onClicked: Vpn.toggle()
+
+                MaterialSymbol {
+                    horizontalAlignment: Qt.AlignHCenter
+                    fill: Vpn.active ? 1 : 0
+                    text: Vpn.active ? "security" : "shield"
+                    iconSize: Appearance.font.pixelSize.large
+                    //color: Appearance.colors.colOnLayer2
+
+                    // Optional: Change color when active to make it stand out
+                    color: Vpn.active ? Appearance.colors.colPrimary : Appearance.colors.colOnLayer2
                 }
             }
         }

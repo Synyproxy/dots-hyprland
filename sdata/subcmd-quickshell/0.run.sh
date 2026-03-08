@@ -8,8 +8,8 @@ source "${REPO_ROOT}/sdata/lib/functions.sh"
 source "${REPO_ROOT}/sdata/lib/environment-variables.sh"
 
 # Define source and destination
-QUICKSHELL_SOURCE="${REPO_ROOT}/dots/.config/quickshell"
-QUICKSHELL_DEST="${HOME}/.config/quickshell"
+QUICKSHELL_SOURCE="${REPO_ROOT}/dots/.config/quickshell/ii"
+QUICKSHELL_DEST="${HOME}/.config/quickshell/ii"
 
 # Check if source exists
 if [ ! -d "${QUICKSHELL_SOURCE}" ]; then
@@ -25,7 +25,7 @@ printf "Copying quickshell config files from ${QUICKSHELL_SOURCE} to ${QUICKSHEL
 
 if [ -d "${QUICKSHELL_DEST}" ] && [ "$(ls -A ${QUICKSHELL_DEST})" ]; then
     # Backup existing config if it's not empty
-    BACKUP_DIR="${HOME}/.config/quickshell.backup.$(date +%Y%m%d-%H%M%S)"
+    BACKUP_DIR="${HOME}/.config/quickshell/ii.backup.$(date +%Y%m%d-%H%M%S)"
     printf "Existing quickshell config found. Creating backup at ${BACKUP_DIR}\n"
     cp -r "${QUICKSHELL_DEST}" "${BACKUP_DIR}"
 fi
